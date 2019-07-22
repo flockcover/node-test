@@ -1,0 +1,10 @@
+{
+  "name": "node-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Flock Cover",
+  "license": "Unlicensed",
+  "devDependencies": {
+    "typescript": "3.5.3"
+  }
+}
