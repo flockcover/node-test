@@ -2,6 +2,7 @@ import nock from 'nock'
 
 import {getDrone, getDrones} from '../src';
 
+const endpoint = 'https://bobs-epic-drone-shack-inc.herokuapp.com';
 const drone: Drone = {
   droneId: 1,
   numFlights: 123,
@@ -10,21 +11,17 @@ const drone: Drone = {
   price: 100000,
   numCrashes: 123
 };
-
 const drones: Drone[] = [drone, drone, drone];
-
-const endpoint = 'https://bobs-epic-drone-shack-inc.herokuapp.com';
 
 describe('getDrone function', () => {
   const route = '/api/v0/drone/1';
-  let scope: nock.Scope;
 
   beforeEach(()=> {
     nock.cleanAll();
   });
 
   it('calls the endpoint', async () => {
-    scope = nock(endpoint).get(route).reply(200, drone);
+    const scope = nock(endpoint).get(route).reply(200, drone);
     await getDrone(1);
     expect(scope.isDone()).toBeTruthy();
   });
@@ -37,8 +34,7 @@ describe('getDrone function', () => {
 
   it('retries a maximum of five times', async () => {
     let calls = 0;
-
-    scope = nock(endpoint).get(route).reply(() => {
+    nock(endpoint).get(route).reply(() => {
       calls++;
       return [500]
     }).persist();
@@ -54,7 +50,7 @@ describe('getDrone function', () => {
     let calls = 0;
     let response;
 
-    scope = nock(endpoint).get(route).reply(() => {
+    nock(endpoint).get(route).reply(() => {
       calls++;
       if (calls < 3) {
         return [500];
@@ -77,7 +73,7 @@ describe('getDrone function', () => {
     await getDrone(1);
 
     // Create failing endpoint
-    scope = nock(endpoint).get(route).reply(() => [500]).persist();
+    nock(endpoint).get(route).reply(() => [500]).persist();
     const response = await getDrone(1);
 
     expect(response).toEqual(drone);
@@ -86,7 +82,7 @@ describe('getDrone function', () => {
   it('if it cannot get a response or a cache result, throws an exception', async () => {
     let error: Error;
 
-    scope = nock(endpoint).get(route).reply(() => [500]).persist();
+    nock(endpoint).get(route).reply(() => [500]).persist();
 
     try {
       await getDrone(1);
@@ -101,14 +97,13 @@ describe('getDrone function', () => {
 
 describe('getDrones function', () => {
   const route = '/api/v0/drones';
-  let scope: nock.Scope;
 
   beforeEach(()=> {
     nock.cleanAll();
   });
 
   it('calls the endpoint', async () => {
-    scope = nock(endpoint).get(route).reply(200, drones);
+    const scope = nock(endpoint).get(route).reply(200, drones);
     await getDrones();
     expect(scope.isDone()).toBeTruthy();
   });
@@ -122,7 +117,7 @@ describe('getDrones function', () => {
   it('retries a maximum of five times', async () => {
     let calls = 0;
 
-    scope = nock(endpoint).get(route).reply(() => {
+    nock(endpoint).get(route).reply(() => {
       calls++;
       return [500]
     }).persist();
@@ -138,7 +133,7 @@ describe('getDrones function', () => {
     let calls = 0;
     let response;
 
-    scope = nock(endpoint).get(route).reply(() => {
+    nock(endpoint).get(route).reply(() => {
       calls++;
       if (calls < 3) {
         return [500];
@@ -161,7 +156,7 @@ describe('getDrones function', () => {
     await getDrone(1);
 
     // Create failing endpoint
-    scope = nock(endpoint).get(route).reply(() => [500]).persist();
+    nock(endpoint).get(route).reply(() => [500]).persist();
     const response = await getDrones();
 
     expect(response).toEqual(drones);
@@ -170,7 +165,7 @@ describe('getDrones function', () => {
   it('if it cannot get a response or a cache result, throws an exception', async () => {
     let error: Error;
 
-    scope = nock(endpoint).get(route).reply(() => [500]).persist();
+    nock(endpoint).get(route).reply(() => [500]).persist();
 
     try {
       await getDrones();
