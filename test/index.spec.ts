@@ -1,0 +1,184 @@
+import nock from 'nock'
+
+import {getDrone, getDrones} from '../src';
+
+const drone: Drone = {
+  droneId: 1,
+  numFlights: 123,
+  name: "Retro Encabulator",
+  currency: "USD",
+  price: 100000,
+  numCrashes: 123
+};
+
+const drones: Drone[] = [drone, drone, drone];
+
+const endpoint = 'https://bobs-epic-drone-shack-inc.herokuapp.com';
+
+describe('getDrone function', () => {
+  const route = '/api/v0/drone/1';
+  let scope: nock.Scope;
+
+  beforeEach(()=> {
+    nock.cleanAll();
+  });
+
+  it('calls the endpoint', async () => {
+    scope = nock(endpoint).get(route).reply(200, drone);
+    await getDrone(1);
+    expect(scope.isDone()).toBeTruthy();
+  });
+
+  it('returns the response', async () => {
+    nock(endpoint).get(route).reply(200, drone);
+    const result = await getDrone(1);
+    expect(result).toEqual(drone);
+  });
+
+  it('retries a maximum of five times', async () => {
+    let calls = 0;
+
+    scope = nock(endpoint).get(route).reply(() => {
+      calls++;
+      return [500]
+    }).persist();
+
+    try {
+      await getDrone(1);
+    } catch (e) {}
+
+    expect(calls).toBe(5);
+  });
+
+  it('retries until it gets a response', async () => {
+    let calls = 0;
+    let response;
+
+    scope = nock(endpoint).get(route).reply(() => {
+      calls++;
+      if (calls < 3) {
+        return [500];
+      } else {
+        return [200, drone];
+      }
+    }).persist();
+
+    try {
+      response = await getDrone(1);
+    } catch (e) {}
+
+    expect(response).toEqual(drone);
+    expect(calls).toBe(3);
+  });
+
+  it('if it cannot get a response, tries to use cached result', async () => {
+    // Fill the cache
+    nock(endpoint).get(route).reply(200, drone).persist(false);
+    await getDrone(1);
+
+    // Create failing endpoint
+    scope = nock(endpoint).get(route).reply(() => [500]).persist();
+    const response = await getDrone(1);
+
+    expect(response).toEqual(drone);
+  });
+
+  it('if it cannot get a response or a cache result, throws an exception', async () => {
+    let error: Error;
+
+    scope = nock(endpoint).get(route).reply(() => [500]).persist();
+
+    try {
+      await getDrone(1);
+    } catch (e) {
+      error = e;
+    }
+
+    expect(error).toBeTruthy();
+    expect(error.message).toEqual('Upstream API error');
+  });
+});
+
+describe('getDrones function', () => {
+  const route = '/api/v0/drones';
+  let scope: nock.Scope;
+
+  beforeEach(()=> {
+    nock.cleanAll();
+  });
+
+  it('calls the endpoint', async () => {
+    scope = nock(endpoint).get(route).reply(200, drones);
+    await getDrones();
+    expect(scope.isDone()).toBeTruthy();
+  });
+
+  it('returns the response', async () => {
+    nock(endpoint).get(route).reply(200, drones);
+    const result = await getDrones();
+    expect(result).toEqual(drones);
+  });
+
+  it('retries a maximum of five times', async () => {
+    let calls = 0;
+
+    scope = nock(endpoint).get(route).reply(() => {
+      calls++;
+      return [500]
+    }).persist();
+
+    try {
+      await getDrones();
+    } catch (e) {}
+
+    expect(calls).toBe(5);
+  });
+
+  it('retries until it gets a response', async () => {
+    let calls = 0;
+    let response;
+
+    scope = nock(endpoint).get(route).reply(() => {
+      calls++;
+      if (calls < 3) {
+        return [500];
+      } else {
+        return [200, drones];
+      }
+    }).persist();
+
+    try {
+      response = await getDrones();
+    } catch (e) {}
+
+    expect(response).toEqual(drones);
+    expect(calls).toBe(3);
+  });
+
+  it('if it cannot get a response, tries to use cached result', async () => {
+    // Fill the cache
+    nock(endpoint).get(route).reply(200, drones);
+    await getDrone(1);
+
+    // Create failing endpoint
+    scope = nock(endpoint).get(route).reply(() => [500]).persist();
+    const response = await getDrones();
+
+    expect(response).toEqual(drones);
+  });
+
+  it('if it cannot get a response or a cache result, throws an exception', async () => {
+    let error: Error;
+
+    scope = nock(endpoint).get(route).reply(() => [500]).persist();
+
+    try {
+      await getDrones();
+    } catch (e) {
+      error = e;
+    }
+
+    expect(error).toBeTruthy();
+    expect(error.message).toEqual('Upstream API error');
+  });
+});
