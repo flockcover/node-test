@@ -49,7 +49,6 @@ describe('getDrone function', () => {
   it('retries until it gets a response', async () => {
     let calls = 0;
     let response;
-
     nock(endpoint).get(route).reply(() => {
       calls++;
       if (calls < 3) {
@@ -81,7 +80,6 @@ describe('getDrone function', () => {
 
   it('if it cannot get a response or a cache result, throws an exception', async () => {
     let error: Error;
-
     nock(endpoint).get(route).reply(() => [500]).persist();
 
     try {
@@ -116,7 +114,6 @@ describe('getDrones function', () => {
 
   it('retries a maximum of five times', async () => {
     let calls = 0;
-
     nock(endpoint).get(route).reply(() => {
       calls++;
       return [500]
@@ -132,7 +129,6 @@ describe('getDrones function', () => {
   it('retries until it gets a response', async () => {
     let calls = 0;
     let response;
-
     nock(endpoint).get(route).reply(() => {
       calls++;
       if (calls < 3) {
@@ -164,7 +160,6 @@ describe('getDrones function', () => {
 
   it('if it cannot get a response or a cache result, throws an exception', async () => {
     let error: Error;
-
     nock(endpoint).get(route).reply(() => [500]).persist();
 
     try {
