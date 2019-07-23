@@ -21,19 +21,25 @@ describe('getDrone function', () => {
   });
 
   it('calls the endpoint', async () => {
+    // API returns one drone
     const scope = nock(endpoint).get(route).reply(200, drone);
+
     await getDrone(1);
     expect(scope.isDone()).toBeTruthy();
   });
 
   it('returns the response', async () => {
+    // API returns one drone
     nock(endpoint).get(route).reply(200, drone);
+
     const result = await getDrone(1);
     expect(result).toEqual(drone);
   });
 
   it('retries a maximum of five times', async () => {
     let calls = 0;
+
+    // API returns an infinite number of errors
     nock(endpoint).get(route).reply(() => {
       calls++;
       return [500]
@@ -49,6 +55,8 @@ describe('getDrone function', () => {
   it('retries until it gets a response', async () => {
     let calls = 0;
     let response;
+
+    // API returns two errors, then an infinite number of drone responses
     nock(endpoint).get(route).reply(() => {
       calls++;
       if (calls < 3) {
@@ -80,6 +88,8 @@ describe('getDrone function', () => {
 
   it('if it cannot get a response or a cache result, throws an exception', async () => {
     let error: Error;
+
+    // API returns infinite number of errors
     nock(endpoint).get(route).reply(() => [500]).persist();
 
     try {
@@ -101,19 +111,25 @@ describe('getDrones function', () => {
   });
 
   it('calls the endpoint', async () => {
+    // API returns one drone list
     const scope = nock(endpoint).get(route).reply(200, drones);
+
     await getDrones();
     expect(scope.isDone()).toBeTruthy();
   });
 
   it('returns the response', async () => {
+    // API returns one drone list
     nock(endpoint).get(route).reply(200, drones);
+
     const result = await getDrones();
     expect(result).toEqual(drones);
   });
 
   it('retries a maximum of five times', async () => {
     let calls = 0;
+
+    // API returns infinite number of errors
     nock(endpoint).get(route).reply(() => {
       calls++;
       return [500]
@@ -129,6 +145,8 @@ describe('getDrones function', () => {
   it('retries until it gets a response', async () => {
     let calls = 0;
     let response;
+
+    // API returns two errors, then infinite number of drone lists
     nock(endpoint).get(route).reply(() => {
       calls++;
       if (calls < 3) {
@@ -160,6 +178,8 @@ describe('getDrones function', () => {
 
   it('if it cannot get a response or a cache result, throws an exception', async () => {
     let error: Error;
+
+    // API returns infinite number of errors
     nock(endpoint).get(route).reply(() => [500]).persist();
 
     try {
