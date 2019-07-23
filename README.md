@@ -27,7 +27,17 @@ A colleague of yours made a start on the work, but was only able to write some u
 
 When all the tests succeed, you should have completed the task.
 
-Part Two (optional)
+Part Two (option 1)
 -------------------
 
-Expose your `getDrone` and `getDrones` as routes in a HTTP server. We suggest [ExpressJS](https://expressjs.com/)
+Expose your `getDrone` and `getDrones` as routes in a HTTP server (either REST or GraphQL). We suggest
+[ExpressJS](https://expressjs.com/).
+
+Part Two (option 2)
+-------------------
+
+Use the `getDrones` function you've written in a command line app that can output a list of drones in one of three formats:
+
+- CSV
+- XML
+- "Pretty printed" ASCII tables
