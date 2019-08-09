@@ -1,6 +1,6 @@
 import nock from 'nock'
 
-import {getDrone, getDrones} from '../src';
+import {getDrone, getDrones} from '../src/drones';
 
 const endpoint = 'https://bobs-epic-drone-shack-inc.herokuapp.com';
 const drone: Drone = {

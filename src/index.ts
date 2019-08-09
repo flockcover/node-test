@@ -1,13 +1,7 @@
-import request from 'request-promise-native'
+import { getDrones } from "./drones";
 
-export async function getDrones (): Promise<Drone[]> {
-  request({
-    uri: 'https://jsonplaceholder.typicode.com/todos/1',
-    json: true
-  });
-  return null as any;
-}
-
-export async function getDrone (id: DroneId): Promise<Drone> {
-  return null as any;
-}
+console.log('Getting drones...');
+getDrones()
+  .then(drones => console.log(drones))
+  .then(() => console.log('Done!'))
+  .catch(err => console.error('Something went wrong: ' + err.message));
