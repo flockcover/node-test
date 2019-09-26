@@ -25,7 +25,7 @@ Your job is to build two functions, `getDrone` and `getDrones`, which will try t
 
 A colleague of yours made a start on the work, but was only able to write some unit tests. You can run them with `yarn test`.
 
-You can run the `getDrones` command directly with `npm run get-drones`.
+You can run the `getDrones` command directly with `yarn get-drones` and `yarn get-drone`.
 
 When all the tests succeed, you should have completed the task.
 
