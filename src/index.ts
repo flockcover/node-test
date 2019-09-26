@@ -1,7 +1,15 @@
-import { getDrones } from "./drones";
+import { getDrone, getDrones } from "./drones";
 
-console.log('Getting drones...');
-getDrones()
-  .then(drones => console.log(drones))
-  .then(() => console.log('Done!'))
-  .catch(err => console.error('Something went wrong: ' + err.message));
+const [cmd, arg] = process.argv.slice(2);
+
+if (cmd === 'get-drones') {
+  getDrones()
+    .then(result => console.log(result))
+    .catch(err => console.error(err));
+}
+
+if (cmd === 'get-drone') {
+  getDrone(parseInt(arg, 10))
+    .then(result => console.log(result))
+    .catch(err => console.error(err));
+}
